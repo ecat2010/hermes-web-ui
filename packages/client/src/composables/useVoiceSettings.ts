@@ -50,8 +50,28 @@ function migrateOldKeys() {
   } catch { /* ignore */ }
 }
 
+// Migrate existing users from Mandarin edgeVoice to Cantonese
+function migrateToCantonese() {
+  try {
+    const raw = localStorage.getItem(STORAGE_KEY)
+    if (!raw) return
+    const parsed = JSON.parse(raw)
+    // Only migrate if edgeVoice is a Mandarin voice (zh-CN / zh_TW) and user hasn't manually changed it
+    const mandarinPrefixes = ['zh-CN', 'zh-TW', 'zh-CN']
+    const isMandarin = mandarinPrefixes.some(p => (parsed.edgeVoice || '').startsWith(p))
+    if (isMandarin) {
+      parsed.edgeVoice = 'zh-HK-HiuGaaiNeural'
+      // Also switch provider to 'edge' if it was 'webspeech' (browser default)
+      if (parsed.provider === 'webspeech') {
+        parsed.provider = 'edge'
+      }
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(parsed))
+    }
+  } catch { /* ignore */ }
+}
+
 const DEFAULT: VoiceSettingsData = {
-  provider: 'webspeech',
+  provider: 'edge',
 
   webspeechVoice: '',
 
@@ -64,7 +84,7 @@ const DEFAULT: VoiceSettingsData = {
   customApiKey: '',
 
   edgeUrl: '',
-  edgeVoice: 'zh-CN-XiaoxiaoNeural',
+  edgeVoice: 'zh-HK-HiuGaaiNeural',
   edgeRate: 1.0,
   edgePitchHz: 0,
 }
@@ -87,6 +107,7 @@ function load(): VoiceSettingsData {
 
 // Run migration once on import
 migrateOldKeys()
+migrateToCantonese()
 
 // ── Reactive state ──
 const provider = ref<TtsProvider>(load().provider)

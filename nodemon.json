@@ -6,7 +6,9 @@
   },
   "env": {
     "TS_NODE_PROJECT": "packages/server/tsconfig.json",
-    "HERMES_WEB_UI_STOP_GATEWAYS_ON_SHUTDOWN": "0"
+    "HERMES_WEB_UI_STOP_GATEWAYS_ON_SHUTDOWN": "0",
+    "HERMES_AGENT_ROOT": "D:/hermes-agent-main",
+    "HERMES_HOME": "C:/Users/ecat2010/.hermes"
   },
   "exec": "node -r ts-node/register packages/server/src/index.ts",
   "nodeArgs": ["--no-warnings"],
